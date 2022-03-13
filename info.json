@@ -1,0 +1,8 @@
+{
+    "id": "shiki.touch",
+    "author": "SimonShiki",
+    "version": "0.1",
+    "icon": "assets/icon.jpg",
+    "inset_icon": "assets/inset_icon.svg",
+    "api": 1
+}
