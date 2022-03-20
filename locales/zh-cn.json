@@ -7,5 +7,6 @@
     "shiki.touch.istouching": "正在触摸?",
     "shiki.touch.fingers": "手指数量",
     "shiki.touch.touchx": "第 [ID] 个手指的 x 坐标",
-    "shiki.touch.touchy": "第 [ID] 个手指的 y 坐标"
+    "shiki.touch.touchy": "第 [ID] 个手指的 y 坐标",
+    "shiki.touch.force": "*第 [ID] 个手指的按压力度"
 }

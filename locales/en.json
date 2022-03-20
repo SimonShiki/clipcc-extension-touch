@@ -7,5 +7,6 @@
     "shiki.touch.istouching": "is touching?",
     "shiki.touch.fingers": "the number of finger",
     "shiki.touch.touchx": "the [ID] th finger's x position",
-    "shiki.touch.touchy": "the [ID] th finger's y position"
+    "shiki.touch.touchy": "the [ID] th finger's y position",
+    "shiki.touch.force": "* the [ID] th finger's y force"
 }
