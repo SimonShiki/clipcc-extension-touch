@@ -2,11 +2,11 @@
     "shiki.touch.name": "触摸侦测",
     "shiki.touch.description": "增加触摸侦测相关积木",
     "shiki.touch.category": "触摸",
-    "shiki.touch.whenspritetouched": "当角色被触摸",
-    "shiki.touch.whenstagetouched": "当舞台被触摸",
-    "shiki.touch.istouching": "正在触摸?",
+    "shiki.touch.whenspritepressed": "当角色被触摸",
+    "shiki.touch.whenstagepressed": "当舞台被触摸",
+    "shiki.touch.ispressing": "正在触摸?",
     "shiki.touch.fingers": "手指数量",
-    "shiki.touch.touchx": "第 [ID] 个手指的 x 坐标",
-    "shiki.touch.touchy": "第 [ID] 个手指的 y 坐标",
+    "shiki.touch.pointx": "第 [ID] 个手指的 x 坐标",
+    "shiki.touch.pointy": "第 [ID] 个手指的 y 坐标",
     "shiki.touch.force": "*第 [ID] 个手指的按压力度"
 }

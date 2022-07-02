@@ -1,75 +1,40 @@
 const { Extension, type, api } = require('clipcc-extension');
-
-function clamp(x, min, max) {
-    return x > max ? max : x < min ? min : x;
-}
+const IO = require('./io');
 
 class Touch extends Extension {
-    constructor () {
-        super();
-        this.touches = [];
-        this.isReported = false;
-    }
-    
-    get isTouching () {
-        return this.touches.length > 0;
-    }
-    
     onInit () {
         this.stage = api.getStageCanvas() || document.querySelector("*[class*=stage_stage_] canvas");
-        this.rect = this.stage.getBoundingClientRect();
         if (!this.stage) {
             alert('Unable to get the stage element, the extension will unavailable.');
             return;
         }
-        
-        this.stage.addEventListener('touchstart', event => {
-            const raw = event.targetTouches;
-            let temp = [];
-            for (const point of raw) {
-                temp.push({
-                    x: clamp(
-                        Math.round(480 * ((point.clientX - this.rect.left) / this.rect.width - 0.5)),
-                        -240,
-                        240
-                    ),
-                    y: clamp(
-                        Math.round(-360 * ((point.clientY - this.rect.top) / this.rect.height - 0.5)),
-                        -180,
-                        180
-                    ),
-                    force: point.force
-                });
-            }
-            this.touches = temp;
-            this.isReported = false;
+        this.rect = this.stage.getBoundingClientRect();
+
+        this.IO = new IO(this.rect);
+
+        this.stage.addEventListener('touchstart', (e) => {
+            const data = {
+                type: 'touchstart',
+                targetTouches: e.targetTouches,
+                changedTouches: e.changedTouches
+            };
+            this.IO.postData(data);
         });
-        this.stage.addEventListener('touchmove', event => {
-            const raw = event.targetTouches;
-            let temp = [];
-            for (const point of raw) {
-                temp.push({
-                    x: clamp(
-                        Math.round(480 * ((point.clientX - this.rect.left) / this.rect.width - 0.5)),
-                        -240,
-                        240
-                    ),
-                    y: clamp(
-                        Math.round(-360 * ((point.clientY - this.rect.top) / this.rect.height - 0.5)),
-                        -180,
-                        180
-                    ),
-                    force: point.force
-                });
-            }
-            this.touches = temp;
-            this.isReported = false;
+        this.stage.addEventListener('touchmove', (e) => {
+            const data = {
+                type: 'touchmove',
+                targetTouches: e.targetTouches,
+                changedTouches: e.changedTouches
+            };
+            this.IO.postData(data);
         });
-        this.stage.addEventListener('touchcancel', event => {
-            this.touches = [];
-        });
-        this.stage.addEventListener('touchend', event => {
-            this.touches = [];
+        this.stage.addEventListener('touchend', (e) => {
+            const data = {
+                type: 'touchend',
+                targetTouches: e.targetTouches,
+                changedTouches: e.changedTouches
+            };
+            this.IO.postData(data);
         });
         
         api.addCategory({
@@ -78,44 +43,47 @@ class Touch extends Extension {
             color: '#33CCCC'
         });
         api.addBlock({
-            opcode: 'shiki.touch.whenstagetouched',
+            opcode: 'shiki.touch.whenstagepressed',
             type: type.BlockType.HAT,
-            messageId: 'shiki.touch.whenstagetouched',
+            messageId: 'shiki.touch.whenstagepressed',
             categoryId: 'shiki.touch.category',
-            function: () => this.whenStageTouched()
+            function: () => {}
         });
         api.addBlock({
-            opcode: 'shiki.touch.whenspritetouched',
+            opcode: 'shiki.touch.whenspritepressed',
             type: type.BlockType.HAT,
-            messageId: 'shiki.touch.whenspritetouched',
+            messageId: 'shiki.touch.whenspritepressed',
             categoryId: 'shiki.touch.category',
-            function: (args, util) => this.whenSpriteTouched(util)
+            function: (args, util) => {}
         });
         api.addBlock({
-            opcode: 'shiki.touch.istouching',
+            opcode: 'shiki.touch.ispressing',
             type: type.BlockType.BOOLEAN,
-            messageId: 'shiki.touch.istouching',
+            messageId: 'shiki.touch.ispressing',
             categoryId: 'shiki.touch.category',
-            function: () => this.isTouching
+            function: () => {
+                const points = this.IO.points;
+                return points.length > 0;
+            }
         });
         api.addBlock({
             opcode: 'shiki.touch.fingers',
             type: type.BlockType.REPORTER,
             messageId: 'shiki.touch.fingers',
             categoryId: 'shiki.touch.category',
-            function: () => this.touches.length,
+            function: () => this.IO.points.length,
             option: {
                 monitor: true
             }
         });
         api.addBlock({
-            opcode: 'shiki.touch.touchx',
+            opcode: 'shiki.touch.pointx',
             type: type.BlockType.REPORTER,
-            messageId: 'shiki.touch.touchx',
+            messageId: 'shiki.touch.pointx',
             categoryId: 'shiki.touch.category',
             function: (args) => {
-                if (this.isTouching) return this.touches[args.ID - 1].x;
-                return NaN;
+                const point = this.IO.points[args.ID - 1];
+                return point ? point._scratchX : 0;
             },
             param: {
                 ID: {
@@ -125,13 +93,13 @@ class Touch extends Extension {
             }
         });
         api.addBlock({
-            opcode: 'shiki.touch.touchy',
+            opcode: 'shiki.touch.pointy',
             type: type.BlockType.REPORTER,
-            messageId: 'shiki.touch.touchy',
+            messageId: 'shiki.touch.pointy',
             categoryId: 'shiki.touch.category',
             function: (args) => {
-                if (this.isTouching) return this.touches[args.ID - 1].y;
-                return NaN;
+                const point = this.IO.points[args.ID - 1];
+                return point ? point._scratchY : 0;
             },
             param: {
                 ID: {
@@ -146,8 +114,8 @@ class Touch extends Extension {
             messageId: 'shiki.touch.force',
             categoryId: 'shiki.touch.category',
             function: (args) => {
-                if (this.isTouching) return this.touches[args.ID - 1].force;
-                return NaN;
+                const point = this.IO.points[args.ID - 1];
+                return point ? point.force : 0;
             },
             param: {
                 ID: {
@@ -156,27 +124,6 @@ class Touch extends Extension {
                 }
             }
         });
-    }
-
-    whenStageTouched() {
-        if (this.isTouching && !this.isReported) {
-            this.isReported = true;
-            return true;
-        }
-        return false;
-    }
-
-    whenSpriteTouched (util) {
-        if (this.isTouching && !this.isReported) {
-            for (const point of this.touches) {
-                const result = util.target.isTouchingPoint(point.x, point.y);
-                if (result) {
-                    this.isReported = true;
-                    return true;
-                }
-            }
-        }
-        return false;
     }
     
     onUninit () {

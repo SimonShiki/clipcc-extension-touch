@@ -2,11 +2,11 @@
     "shiki.touch.name": "Touch",
     "shiki.touch.description": "Add touch screen detection.",
     "shiki.touch.category": "Touch",
-    "shiki.touch.whenspritetouched": "when this sprite touched",
-    "shiki.touch.whenstagetouched": "when stage touched",
-    "shiki.touch.istouching": "is touching?",
+    "shiki.touch.whenspritepressed": "when this sprite touched",
+    "shiki.touch.whenstagepressed": "when stage touched",
+    "shiki.touch.ispressing": "is touching?",
     "shiki.touch.fingers": "the number of finger",
-    "shiki.touch.touchx": "the [ID] th finger's x position",
-    "shiki.touch.touchy": "the [ID] th finger's y position",
+    "shiki.touch.pointx": "the [ID] th finger's x position",
+    "shiki.touch.pointy": "the [ID] th finger's y position",
     "shiki.touch.force": "* the [ID] th finger's y force"
 }
