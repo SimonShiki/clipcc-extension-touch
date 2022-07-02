@@ -95,7 +95,7 @@ class IO {
                             -240,
                             240
                         )),
-                        _scratchY: Math.round(IO.clamp(
+                        _scratchY: 0 - Math.round(IO.clamp(
                             360 * (((point.clientY - this.rect.top) / this.rect.height) - 0.5),
                             -180,
                             180
@@ -124,7 +124,7 @@ class IO {
                             -240,
                             240
                         )),
-                        _scratchY: Math.round(IO.clamp(
+                        _scratchY: 0 - Math.round(IO.clamp(
                             360 * (((point.clientY - this.rect.top) / this.rect.height) - 0.5),
                             -180,
                             180
@@ -152,7 +152,35 @@ class IO {
                             -240,
                             240
                         )),
-                        _scratchY: Math.round(IO.clamp(
+                        _scratchY: 0 - Math.round(IO.clamp(
+                            360 * (((point.clientY - this.rect.top) / this.rect.height) - 0.5),
+                            -180,
+                            180
+                        )),
+                        isDown: false,
+                        force: point.force,
+                        target: picked
+                    });
+                    this._activateClickHats(picked);
+                }
+                if (window.touchdebug) console.log(currentPoints);
+                this.points = currentPoints;
+                break;
+            }
+            case 'touchcancel': {
+                const points = Array.from(data.targetTouches);
+                const currentPoints = [];
+                for (const point of points) {
+                    const picked = this._pickTarget(point.clientX, point.clientY);
+                    currentPoints.push({
+                        _clientX: point.clientX,
+                        _clientY: point.clientY,
+                        _scratchX: Math.round(IO.clamp(
+                            480 * (((point.clientX - this.rect.left) / this.rect.width) - 0.5),
+                            -240,
+                            240
+                        )),
+                        _scratchY: 0 - Math.round(IO.clamp(
                             360 * (((point.clientY - this.rect.top) / this.rect.height) - 0.5),
                             -180,
                             180

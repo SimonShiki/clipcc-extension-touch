@@ -37,6 +37,15 @@ class Touch extends Extension {
             this.IO.postData(data);
         });
         
+        this.stage.addEventListener('touchcancel', (e) => {
+            const data = {
+                type: 'touchcancel',
+                targetTouches: e.targetTouches,
+                changedTouches: e.changedTouches
+            };
+            this.IO.postData(data);
+        });
+        
         api.addCategory({
             categoryId: 'shiki.touch.category',
             messageId: 'shiki.touch.category',
